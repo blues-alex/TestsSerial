@@ -1,0 +1,57 @@
+#!/usr/bin/python3
+
+from LMInterface import *
+from Logger import *
+from time import strftime, sleep
+from sys import argv
+from random import random
+
+
+def tofloat(string):
+    if '.' in string:
+        string = string.split('.')
+        if len(string) == 2:
+            if string[0].isdigit() and string[1].isdigit():
+                return float(f'{string[0]}.{string[1]}')
+    else:
+        return None
+
+
+name = f"SC_test_{strftime('%d%m%Y-%H%M%S')}.log"
+
+if len(argv) == 4:
+    iters = int(argv[1]) if argv[1].isdigit() else 1
+    TIMEOUT = tofloat(argv[2])
+    MODE = 'b'
+elif len(argv) == 3:
+    iters = int(argv[1]) if argv[1].isdigit() else 1
+    TIMEOUT = tofloat(argv[2])
+    MODE = None
+elif len(argv) == 2:
+    iters = int(argv[1]) if argv[1].isdigit() else 1
+    TIMEOUT = None
+    MODE = None
+else:
+    iters = 1
+    TIMEOUT = None
+    MODE = None
+
+
+with open(name, 'w') as log:
+    log.write(f"Test started with timeout: {TIMEOUT}\n")
+
+handler = LMHandler()
+
+handler.SM(2)
+
+for i in range(iters):
+    point = [random() * 10 for i in range(10)]
+    logger(handler.SC, "SC", name, args=point, mode=MODE)
+    if TIMEOUT:
+        sleep(TIMEOUT)
+    logger(handler.GC, "GC", name, args=1, mode=MODE)
+    if TIMEOUT:
+        sleep(TIMEOUT)
+
+handler.SM(1)
+print(f'Done for {iters} iteration(s).')

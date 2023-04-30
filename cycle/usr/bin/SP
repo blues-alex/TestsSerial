@@ -1,0 +1,15 @@
+#!/usr/bin/python3
+
+from LMInterface import *
+from Logger import *
+from time import strftime
+from sys import argv
+
+name = f"SP_test_{strftime('%d%m%Y-%H%M%S')}.log"
+handler = LMHandler()
+iters = argv[1] if argv[1].isdigit() else '1'
+
+for i in range(int(iters)):
+    logger(handler.SP, "SP", name, args=None)
+
+print(f'Done for {iters} iteration(s).')

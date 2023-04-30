@@ -1,0 +1,61 @@
+#!/usr/bin/python3
+
+
+from LMInterface import *
+from Logger import *
+from time import strftime, sleep
+from sys import argv
+from random import randint, choice, random
+
+
+def tofloat(string):
+    if '.' in string:
+        string = string.split('.')
+        if len(string) == 2:
+            if string[0].isdigit() and string[1].isdigit():
+                return float(f'{string[0]}.{string[1]}')
+    else:
+        return None
+
+
+if len(argv) == 4:
+    iters = int(argv[1]) if argv[1].isdigit() else 1
+    TIMEOUT = tofloat(argv[2])
+    MODE = 'b'
+elif len(argv) == 3:
+    iters = int(argv[1]) if argv[1].isdigit() else 1
+    TIMEOUT = tofloat(argv[2])
+    MODE = None
+elif len(argv) == 2:
+    iters = int(argv[1]) if argv[1].isdigit() else 1
+    TIMEOUT = None
+    MODE = None
+else:
+    iters = 1
+    TIMEOUT = None
+    MODE = None
+
+name = f"writeCycle_test_{strftime('%d%m%Y-%H%M%S')}.log"
+handler = LMHandler()
+
+
+def cycle_generator():
+    times_min = [i for i in range(1, 1440, 6)]
+    len_cycle = randint(2, 79)
+    time_list = []
+    while len(time_list) < len_cycle:
+        point = choice(times_min)
+        if point not in time_list:
+            time_list.append(point)
+    time_list.sort()
+    time_list = [f"{t//60:02d}{t%60:02d}" for t in time_list]
+    cycle = [[t] + [round(random() * 10, 2) for _ in range(12)] for t in time_list]
+    return cycle
+
+
+for i in range(int(iters)):
+    logger(handler.writeCycle, "writeCycle", name, args=cycle_generator(), mode=MODE)
+    if TIMEOUT:
+        sleep(TIMEOUT)
+
+print(f'Done for {iters} iteration(s).')
