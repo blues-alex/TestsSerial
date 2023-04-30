@@ -45,8 +45,8 @@ US = '\x1f'
 
 class Controller:
 
-    def __init__(self):
-        self.sr = serial.Serial('/dev/ttyATH0')
+    def __init__(self, port='/dev/ttyUSB0'):
+        self.sr = serial.Serial(port)
         self.sr.TIMEOUT = TIMEOUT
         self.sr.timeout = TIMEOUT
         self.sr.baudrate = 9600
