@@ -1,0 +1,61 @@
+#!/usr/bin/python3
+
+from LMInterface import *
+from Logger import *
+from time import strftime, sleep
+from random import randint
+from sys import argv
+
+
+def tofloat(string):
+    if '.' in string:
+        string = string.split('.')
+        if len(string) == 2:
+            if string[0].isdigit() and string[1].isdigit():
+                return float(f'{string[0]}.{string[1]}')
+    else:
+        return None
+
+
+name = f"GA_test_{strftime('%d%m%Y-%H%M%S')}.log"
+
+if len(argv) == 4:
+    iters = int(argv[1]) if argv[1].isdigit() else 1
+    TIMEOUT = tofloat(argv[2])
+    MODE = 'b'
+elif len(argv) == 3:
+    iters = int(argv[1]) if argv[1].isdigit() else 1
+    TIMEOUT = tofloat(argv[2])
+    MODE = None
+elif len(argv) == 2:
+    iters = int(argv[1]) if argv[1].isdigit() else 1
+    TIMEOUT = None
+    MODE = None
+else:
+    iters = 1
+    TIMEOUT = None
+    MODE = None
+
+
+# with open(name, 'w') as log:
+    # log.write(f"Test started with timeout: {TIMEOUT}\n")
+
+handler = LMHandler()
+n = 0
+blackOut = [10000] * 12 
+for i in range(iters):
+    n +=1
+    # logger(handler.GA, "GA", name, args=1, mode=MODE)
+    spectr = [randint(0, 10000) for i in range(12)]
+    print(f"#{n} [GT] {handler.GT()}")
+    print(f"#{n} [GM] {handler.GM()}")
+    print(f"#{n} [GC] {handler.GC()}")
+    handler.SM(2)
+    print(f"#{n} [SC] {spectr=} {handler.SC(spectr)}")
+    sleep(0.3)
+    print(f"#{n} [SC] {blackOut=} {handler.SC(blackOut)}")
+    handler.SM(1)
+    if TIMEOUT:
+        sleep(TIMEOUT)
+
+print(f'Done for {iters} iteration(s).')
