@@ -11,7 +11,7 @@ TIMEOUT = 1
 US = '\x1f'
 ENQ = '\x05'
 
-sr = serial.Serial('/dev/ttyATH0')
+sr = serial.Serial('/dev/ttyUSB0')
 sr.timeout = TIMEOUT
 sr.baudrate = 9600
 

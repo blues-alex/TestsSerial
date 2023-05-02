@@ -1,0 +1,68 @@
+#!/usr/bin/python3
+
+from LMInterface import *
+import os
+import random
+from datetime import datetime
+from time import *
+
+tmp_name = 'CurrentTest.log'
+handler = LMHandler()
+
+
+def parse_time(mess):
+    mess = str(mess)[2:-1]
+    hh, mm = mess[0:2], mess[2:4]
+    return f"{hh}:{mm}"
+
+
+def ts_to_mess(ts):
+    # time of minutes 60*24-1
+    result = f"{ts//60:02d}{ts%60:02d}00000000" if ts > 60 else f"00{ts:02d}00000000"
+    print(f"TS: {ts}, result: {result}, len result: {len(result)}")
+    return result
+
+
+def ytime(offset):
+    # time of minutes 60*24-1
+    ts = 0
+    while offset - 12 > 0:
+        step = random.randint(3, int(offset / 3))
+        offset -= step
+        ts += step
+        yield ts
+
+
+gt = handler.GT()
+
+mess = f"[RX]\t[{datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\tAnswer GT before test:\t{gt['mess']}, {parse_time(gt['mess'])}\n"
+
+with open(tmp_name, 'w') as f:
+    f.write(mess + '\n')
+
+print(mess)
+
+for i, ts in enumerate(ytime(60 * 24 - 1)):
+    st_answ = handler.ST(ts_to_mess(ts))
+    print(st_answ)
+    mess = f"[{i+1}]\t[{datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\t[TX]\t{ts_to_mess(ts)}\n"
+    with open(tmp_name, 'a') as f:
+        f.write(mess)
+    print(mess[:-1])
+    gt = handler.GT()
+    print(gt)
+    mess = f"[{i+1}]\t[{datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\t[RX]\t{str(gt['mess'])[2:-1]}\n"
+    with open(tmp_name, 'a') as f:
+        f.write(mess)
+    print(mess[:-1])
+    sleep(120)
+    gt = handler.GT()
+    print(gt)
+    mess = f"[{i+1}]\t[{datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\t[RX]\t{str(gt['mess'])[2:-1]}\n\n"
+    with open(tmp_name, 'a') as f:
+        f.write(mess)
+    print(mess[:-1])
+
+
+name = f"TimeTestLog_{strftime('%F_%T')}.log"
+os.rename(tmp_name, name)
