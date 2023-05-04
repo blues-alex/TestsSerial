@@ -105,17 +105,30 @@ def sendCommand(message):
 
 def CheckChannels():
     sendCommand(f'$SM2{ENQ}')
-    for i in range(7):
-        channels = ['10000' for c in range(9)]
-        for n in range(10):
-            mess = "\x1f".join(channels[:i] + [f"{10000-(n*5):05}"] + channels[i:])
-            sendCommand(f'$SC00\x1f{mess}{ENQ}')
+    # for i in range(7):
+    #     channels = ['10000' for c in range(12)]
+    #     for n in range(50):
+    #         mess = "\x1f".join(channels[:i] + [f"{10000-(n*1):05}"] + channels[i:])
+    #         sendCommand(f'$SC00\x1f{mess}{ENQ}')
+    # mess = "\x1f".join(["09999" for c in range(12)])
+    # sendCommand(f'$SC00\x1f{mess}{ENQ}')
+    # time.sleep(3)
+    mess = "\x1f".join(["10000" for c in range(12)])
+    sendCommand(f'$SC00\x1f{mess}{ENQ}')
+    time.sleep(3)
+    for ch in range(10000, 9990, -1):
+        val = f"{ch:05}"
+        print(val)
+        mess = "\x1f".join([val for c in range(12)])
+        sendCommand(f'$SC00\x1f{mess}{ENQ}')
+        time.sleep(1)
+    mess = "\x1f".join(["10000" for c in range(12)])
+    sendCommand(f'$SC00\x1f{mess}{ENQ}')
+    time.sleep(3)
     sendCommand(f'$SM1{ENQ}')
 
 
 def main():
-    with open('/tmp/logs/controller_version.log', 'w') as fw:
-        fw.write(repr(sendCommand(f'$GV{ENQ}')))
     CheckChannels()
 
 

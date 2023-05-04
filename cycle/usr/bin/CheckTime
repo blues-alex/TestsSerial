@@ -33,9 +33,10 @@ def ytime(offset):
         yield ts
 
 
+gv = handler.GV()
+mess = f"[RX]\t[{datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\tAnswer GV before test:\t{gv['mess']}\n"
 gt = handler.GT()
-
-mess = f"[RX]\t[{datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\tAnswer GT before test:\t{gt['mess']}, {parse_time(gt['mess'])}\n"
+mess += f"[RX]\t[{datetime.now().strftime('%H:%M:%S.%f')[:-3]}]\tAnswer GT before test:\t{gt['mess']}, {parse_time(gt['mess'])}\n"
 
 with open(tmp_name, 'w') as f:
     f.write(mess + '\n')
