@@ -109,8 +109,8 @@ while True:
     interpolate_chns = get_interpolate_channels(current_time, cycle)
     gt = get_controller_ts()
     chns = [(10000 - int(i)) / 100 for i in handler.GC()['mess'].split(b'\x1f')]
-    print(f"\x1b[0;33m{current_time}: \x1b[0;32m{interpolate_chns}\x1b[0m")
-    print(f"\x1b[0;33m{gt}: \x1b[0;34m{chns}\x1b[0m")
+    print(f"Interpolate:\t[{current_time}]\t{interpolate_chns}")
+    print(f"Controller:\t[{gt}]\t{chns}")
     with open(DELTA_LOG, 'a') as j:
         j.seek(j.truncate(j.tell() - 1))
         # meassures[current_time] = [interpolate_chns, chns]
